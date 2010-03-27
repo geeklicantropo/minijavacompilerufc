@@ -17,7 +17,7 @@ public class eg1{  public static void main(String args []) throws ParseExcepti
 | < RBRACES : "}" >
 | < LPAREN : "(" >
 | < RPAREN : ")" >
-| < ULINE : "_" >}TOKEN : /* Palavras Reservadas */{  < PUBLIC : "public" >| < STATIC : "STATIC" >
+| < ULINE : "_" >}TOKEN : /* Palavras Reservadas */{  < PUBLIC : "public" >| < STATIC : "static" >
 | < TRUE : "true" >
 | < FALSE : "false" >
 | < VOID : "void" >
@@ -36,6 +36,7 @@ public class eg1{  public static void main(String args []) throws ParseExcepti
 TOKEN : /* Tipos */
 {
   	< INT : "int" >
+| < INTARRAY : "int[]" >
 | < STRING : "String" >
 | < BOOLEAN : "boolean" >
 
@@ -43,9 +44,8 @@ TOKEN : /* Tipos */
 
 TOKEN :
 {
-  < #LETTERLC : ["a" - "z"] >
-| < #LETTERUC : ["A" - "Z"] >
-| < DIGIT : ["0" - "9"] >| < ID: < LETTERLC > (< LETTERLC > | < LETTERUC > | < ULINE > | < DIGIT >)+ >
+  < #LETTER : ["a" - "z"] | ["A" - "Z"] >
+| < #DIGIT : ["0" - "9"] >| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)+ >
 
 }
 
