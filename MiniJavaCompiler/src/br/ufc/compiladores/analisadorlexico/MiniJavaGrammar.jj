@@ -1,15 +1,31 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
- */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(eg1)package br.ufc.compiladores.analisadorlexico;
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(MiniJavaParser)package br.ufc.compiladores.analisadorlexico;
 
-public class eg1{  public static void main(String args []) throws ParseException  {    eg1 parser = new eg1(System.in);    while (true)    {      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");      try      {        switch (eg1.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        eg1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(eg1)SKIP :{
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileReader;
+
+public class MiniJavaParser{  public static void main(String args []) throws ParseException, IOException  {
+	FileInputStream fileInpuStream = new FileInputStream("teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInpuStream);
+        while (true)    {      System.out.println("Lendo arquivo .java, do diretório ../JavaFiles");      try      {        switch (MiniJavaParser.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        MiniJavaParser.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(MiniJavaParser)SKIP :
+{
   < "/" "/" ( ~[ "\n", "\r" ] )* ( "\n" | "\r" | "\r\n" ) >
-| < "/" "*" ( ~[ "*" ] | "*" ~[ "/" ] )* "*/" >| " "| "\r"| "\r\n"| "\n"
-}TOKEN : /* Operadores e Simbolos */{  < PLUS : "+" >
+| < "/" "*" ( ~[ "*" ] | "*" ~[ "/" ] )* "*/" >
+| " "
+| "\r"
+| "\r\n"
+| "\n"
+}
+
+TOKEN : /* Operadores e Simbolos */
+{
+  < PLUS : "+" >
 | < AND : "&&" >
 | < LESSTHAN :"<" >
 | < MINUS : "-" >
-| < MULTIPLY : "*" >| < NOT : "!" >
+| < MULTIPLY : "*" >
+| < NOT : "!" >
 | < SEMICOLON : ";" >
 | < COMMA : "," >
 | < DOT : "." >
@@ -20,7 +36,13 @@ public class eg1{  public static void main(String args []) throws ParseExcepti
 | < RBRACES : "}" >
 | < LPAREN : "(" >
 | < RPAREN : ")" >
-| < ULINE : "_" >}TOKEN : /* Palavras Reservadas */{  < PUBLIC : "public" >| < STATIC : "static" >
+| < ULINE : "_" >
+}
+
+TOKEN : /* Palavras Reservadas */
+{
+  < PUBLIC : "public" >
+| < STATIC : "static" >
 | < TRUE : "true" >
 | < FALSE : "false" >
 | < VOID : "void" >
@@ -35,7 +57,8 @@ public class eg1{  public static void main(String args []) throws ParseExcepti
 | < THIS: "this" >
 | < NEW: "new" >
 | < LENGTH: "length" >
-| < STRING: "String" >}
+| < STRING: "String" >
+}
 
 TOKEN : /* Tipos */
 {
@@ -48,11 +71,14 @@ TOKEN :
 {
   < #LETTER : ["a" - "z"] | ["A" - "Z"] >
 | < #DIGIT : ["0" - "9"] >
-| < NUMBER: (< DIGIT >)+ >| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)+ >
+| < NUMBER: (< DIGIT >)+ >
+| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)+ >
 
 }
 int program() :
-{}{  mainClass() ( classDeclaration() )*
+{}
+{
+  mainClass() ( classDeclaration() )*
 }
 
 void mainClass() :
@@ -60,11 +86,13 @@ void mainClass() :
 {
   < CLASS > < ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET >
   statement() < RBRACES >
-  < RBRACES >}
+  < RBRACES >
+}
 
 void classDeclaration() :
 {}
-{  < CLASS > < ID > classDeclarationBlock()
+{
+  < CLASS > < ID > classDeclarationBlock()
 }
 
 void classDeclarationBlock() :
@@ -78,12 +106,14 @@ void classDeclarationBlock() :
 
 void varDeclaration() :
 {}
-{  type() < ID > < SEMICOLON >
+{
+  type() < ID > < SEMICOLON >
 }
 
 void methodDeclaration() :
 {}
-{  < PUBLIC > type() < ID > < LPAREN > parameterList() < RPAREN > < LBRACES >
+{
+  < PUBLIC > type() < ID > < LPAREN > parameterList() < RPAREN > < LBRACES >
   methodLoop() < RETURN > expression() < SEMICOLON > < RBRACES >
 }
 
@@ -99,15 +129,20 @@ void identifierStartedLine() :
 {}
 {
   < ID > < SEMICOLON > methodLoop() // caso em que o primeiro identificador é o tipo da variável
-| identifierStartedStatement() // caso em que o primeiro identificador é parte de uma sentença. Sai do method loop porque não podem mais haver declarações de variáveis}
+| identifierStartedStatement() // caso em que o primeiro identificador é parte de uma sentença. Sai do method loop porque não podem mais haver declarações de variáveis
+}
 
 void identifierStartedStatement() :
-{}{  < EQUAL > expression() < SEMICOLON > statementLoop()
+{}
+{
+  < EQUAL > expression() < SEMICOLON > statementLoop()
 | < LBRACKET > expression() < RBRACKET > < EQUAL > expression() < SEMICOLON > statementLoop()
 }
 
 void statementLoop() :
-{}{  < ID > identifierStartedStatement()
+{}
+{
+  < ID > identifierStartedStatement()
 | statement() statementLoop()
 | {}
 }
@@ -121,18 +156,22 @@ void parameterList() :
 
 void parameterListTail() :
 {}
-{  < COMMA > type() < ID >
+{
+  < COMMA > type() < ID >
 }
 
 void type() :
 {}
-{  < INT >
+{
+  < INT >
 | < INTARRAY >
 | < BOOLEAN >
 // | < ID > esta produção não é incluida aqui porque é tratada no não-terminal methodLoop, para evitar conflitos.
-}
+}
+
 void statement() :
-{}{
+{}
+{
   < LBRACES > ( statement() )* < RBRACES >
 | < IF > < LPAREN > statement() < RPAREN > statement() < ELSE > statement()
 | < WHILE > < LPAREN > expression() < RPAREN > statement()
@@ -143,7 +182,8 @@ void statement() :
 void expression() : // TODO: continuar as produções da expressão, e implementar outros não terminais.
 {}
 {
-  < NUMBER > < PLUS > < NUMBER >}
+  < NUMBER > < PLUS > < NUMBER >
+}
 
 //TODO: remover gramática do templete abaixo.
 int one_line() :
