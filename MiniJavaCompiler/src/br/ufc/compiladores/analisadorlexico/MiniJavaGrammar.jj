@@ -34,15 +34,14 @@ public class eg1{  public static void main(String args []) throws ParseExcepti
 | < CLASS: "class" >
 | < THIS: "this" >
 | < NEW: "new" >
-| < LENGTH: "length" >}
+| < LENGTH: "length" >
+| < STRING: "String" >}
 
 TOKEN : /* Tipos */
 {
   	< INT : "int" >
 | < INTARRAY : "int[]" >
-| < STRING : "String" >
 | < BOOLEAN : "boolean" >
-
 }
 
 TOKEN :
@@ -52,7 +51,101 @@ TOKEN :
 | < NUMBER: (< DIGIT >)+ >| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)+ >
 
 }
+int program() :
+{}{  mainClass() ( classDeclaration() )*
+}
 
+void mainClass() :
+{}
+{
+  < CLASS > < ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET >
+  statement() < RBRACES >
+  < RBRACES >}
+
+void classDeclaration() :
+{}
+{  < CLASS > < ID > classDeclarationBlock()
+}
+
+void classDeclarationBlock() :
+{}
+{
+  < LBRACES >
+  ( varDeclaration() )* ( methodDeclaration() )* < RBRACES >
+| < EXTENDS > < ID > < LBRACES >
+  ( varDeclaration() )* ( methodDeclaration() )* < RBRACES >
+}
+
+void varDeclaration() :
+{}
+{  type() < ID > < SEMICOLON >
+}
+
+void methodDeclaration() :
+{}
+{  < PUBLIC > type() < ID > < LPAREN > parameterList() < RPAREN > < LBRACES >
+  methodLoop() < RETURN > expression() < SEMICOLON > < RBRACES >
+}
+
+void methodLoop() :
+{}
+{
+  < ID > identifierStartedLine()
+| varDeclaration() methodLoop()
+| statement() statementLoop()
+}
+
+void identifierStartedLine() :
+{}
+{
+  < ID > < SEMICOLON > methodLoop() // caso em que o primeiro identificador é o tipo da variável
+| identifierStartedStatement() // caso em que o primeiro identificador é parte de uma sentença. Sai do method loop porque não podem mais haver declarações de variáveis}
+
+void identifierStartedStatement() :
+{}{  < EQUAL > expression() < SEMICOLON > statementLoop()
+| < LBRACKET > expression() < RBRACKET > < EQUAL > expression() < SEMICOLON > statementLoop()
+}
+
+void statementLoop() :
+{}{  < ID > identifierStartedStatement()
+| statement() statementLoop()
+| {}
+}
+
+void parameterList() :
+{}
+{
+  type() < ID > ( parameterListTail() )*
+| {}
+}
+
+void parameterListTail() :
+{}
+{  < COMMA > type() < ID >
+}
+
+void type() :
+{}
+{  < INT >
+| < INTARRAY >
+| < BOOLEAN >
+// | < ID > esta produção não é incluida aqui porque é tratada no não-terminal methodLoop, para evitar conflitos.
+}
+void statement() :
+{}{
+  < LBRACES > ( statement() )* < RBRACES >
+| < IF > < LPAREN > statement() < RPAREN > statement() < ELSE > statement()
+| < WHILE > < LPAREN > expression() < RPAREN > statement()
+| < SYSOUT > < LPAREN > expression() < RPAREN > < SEMICOLON >
+// As produções iniciando com < ID > não são incluidas aqui  porque são tratadas no não-terminal methodLoop, para evitar conflitos.
+}
+
+void expression() : // TODO: continuar as produções da expressão, e implementar outros não terminais.
+{}
+{
+  < NUMBER > < PLUS > < NUMBER >}
+
+//TODO: remover gramática do templete abaixo.
 int one_line() :
 {}
 {
