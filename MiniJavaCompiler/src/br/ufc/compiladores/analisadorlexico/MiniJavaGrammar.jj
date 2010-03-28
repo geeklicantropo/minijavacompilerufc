@@ -4,10 +4,9 @@
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.FileReader;
 
 public class MiniJavaParser{  public static void main(String args []) throws ParseException, IOException  {
-	FileInputStream fileInpuStream = new FileInputStream("teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInpuStream);
+	    FileInputStream fileInpuStream = new FileInputStream("JavaFiles/teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInpuStream);
         while (true)    {      System.out.println("Lendo arquivo .java, do diretório ../JavaFiles");      try      {        switch (MiniJavaParser.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        MiniJavaParser.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(MiniJavaParser)SKIP :
 {
   < "/" "/" ( ~[ "\n", "\r" ] )* ( "\n" | "\r" | "\r\n" ) >
@@ -75,7 +74,7 @@ TOKEN :
 | < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)+ >
 
 }
-int program() :
+void program() :
 {}
 {
   mainClass() ( classDeclaration() )*
