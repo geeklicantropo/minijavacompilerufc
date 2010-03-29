@@ -6,8 +6,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class MiniJavaParser{  public static void main(String args []) throws ParseException, IOException  {
-	    FileInputStream fileInpuStream = new FileInputStream("JavaFiles/teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInpuStream);
-        while (true)    {      System.out.println("Lendo arquivo .java, do diretório ../JavaFiles");      try      {        switch (MiniJavaParser.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        MiniJavaParser.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(MiniJavaParser)SKIP :
+	    FileInputStream fileInputStream = new FileInputStream("JavaFiles/teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInputStream);
+    System.out.println("Lendo arquivo teste.java, do diretório ../JavaFiles");
+        try    {      MiniJavaParser.program();      System.out.println("OK!");    }    catch (Exception e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(MiniJavaParser)SKIP :
 {
   < "/" "/" ( ~[ "\n", "\r" ] )* ( "\n" | "\r" | "\r\n" ) >
 | < "/" "*" ( ~[ "*" ] | "*" ~[ "/" ] )* "*/" >
@@ -15,6 +16,7 @@ public class MiniJavaParser{  public static void main(String args []) throws P
 | "\r"
 | "\r\n"
 | "\n"
+| "\t"
 }
 
 TOKEN : /* Operadores e Simbolos */
@@ -70,9 +72,7 @@ TOKEN :
 {
   < #LETTER : ["a" - "z"] | ["A" - "Z"] >
 | < #DIGIT : ["0" - "9"] >
-| < NUMBER: (< DIGIT >)+ >
-| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)+ >
-
+| < INT_LITERAL: (< DIGIT >)+ >| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)* >
 }
 void program() :
 {}
@@ -83,7 +83,7 @@ void program() :
 void mainClass() :
 {}
 {
-  < CLASS > < ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET >
+  < CLASS > < ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET > < ID > < RPAREN > < LBRACES >
   statement() < RBRACES >
   < RBRACES >
 }
@@ -106,7 +106,13 @@ void classDeclarationBlock() :
 void varDeclaration() :
 {}
 {
-  type() < ID > < SEMICOLON >
+  < ID > < ID > < SEMICOLON >
+|  varDeclarationNoID()}
+
+void varDeclarationNoID() :
+{}
+{
+  typeNoID() < ID > < SEMICOLON >
 }
 
 void methodDeclaration() :
@@ -120,30 +126,30 @@ void methodLoop() :
 {}
 {
   < ID > identifierStartedLine()
-| varDeclaration() methodLoop()
-| statement() statementLoop()
+| varDeclarationNoID() methodLoop()
+| statementNoID() ( statement() )*
+| {}
 }
 
 void identifierStartedLine() :
 {}
 {
   < ID > < SEMICOLON > methodLoop() // caso em que o primeiro identificador é o tipo da variável
-| identifierStartedStatement() // caso em que o primeiro identificador é parte de uma sentença. Sai do method loop porque não podem mais haver declarações de variáveis
+| identifierStartedStatement() ( statement() ) * // caso em que o primeiro identificador é parte de uma sentença. Não volta ao methodLoop porque não podem mais haver declarações de variáveis
 }
 
 void identifierStartedStatement() :
 {}
 {
-  < EQUAL > expression() < SEMICOLON > statementLoop()
-| < LBRACKET > expression() < RBRACKET > < EQUAL > expression() < SEMICOLON > statementLoop()
+  < EQUAL > expression() < SEMICOLON >
+| < LBRACKET > expression() < RBRACKET > < EQUAL > expression() < SEMICOLON > 
 }
 
-void statementLoop() :
+void statement() :
 {}
 {
   < ID > identifierStartedStatement()
-| statement() statementLoop()
-| {}
+| statementNoID()
 }
 
 void parameterList() :
@@ -162,76 +168,77 @@ void parameterListTail() :
 void type() :
 {}
 {
-  < INT >
+  < ID >
+| typeNoID()
+}
+
+void typeNoID() :
+{}
+{  < INT >
 | < INTARRAY >
 | < BOOLEAN >
 // | < ID > esta produção não é incluida aqui porque é tratada no não-terminal methodLoop, para evitar conflitos.
 }
 
-void statement() :
+void statementNoID() :
 {}
 {
   < LBRACES > ( statement() )* < RBRACES >
-| < IF > < LPAREN > statement() < RPAREN > statement() < ELSE > statement()
+| < IF > < LPAREN > expression() < RPAREN > statement() < ELSE > statement()
 | < WHILE > < LPAREN > expression() < RPAREN > statement()
 | < SYSOUT > < LPAREN > expression() < RPAREN > < SEMICOLON >
 // As produções iniciando com < ID > não são incluidas aqui  porque são tratadas no não-terminal methodLoop, para evitar conflitos.
 }
 
-void expression() : // TODO: continuar as produções da expressão, e implementar outros não terminais.
+void expression() :
 {}
 {
-  < NUMBER > < PLUS > < NUMBER >
+ < INT_LITERAL > expressionRecursion()
+| < TRUE > expressionRecursion()
+| < FALSE > expressionRecursion()
+| < ID > expressionRecursion() 
+| < THIS > expressionRecursion()
+| < NEW > newStartedExpression() expressionRecursion()
+| < NOT > expression() expressionRecursion()
+| < LPAREN > expression() < RPAREN > expressionRecursion()
 }
 
-//TODO: remover gramática do templete abaixo.
-int one_line() :
+void newStartedExpression() :
 {}
 {
-  sum() ";"
-  {
-    return 0;
-  }
-| ";"
-  {
-    return 1;
-  }
-}
-void sum() :
+  < INT > < LBRACKET > expression() < RBRACKET > 
+| < ID > < LPAREN > < RPAREN > }
+
+void expressionRecursion() :
 {}
 {
-  term()
-  (
-    (
-      < PLUS >
-    | < MINUS >
-    )
-    term()
-  )*
+  operator() expression() expressionRecursion()
+| < LBRACKET > expression() < RBRACKET > expressionRecursion()
+| < DOT > dotStartedExpressionRecursion() expressionRecursion()
+| {}}
+
+void dotStartedExpressionRecursion() :
+{}
+{
+  < LENGTH > 
+| < ID > < LPAREN > expressionList() < RPAREN >}
+
+void expressionList() :
+{}
+{  expression() ( expressionListTail() )*
+| {}
 }
 
-void term() :
+void expressionListTail() :
 {}
-{
-  unary()
-  (
-    (
-      < MULTIPLY >
-    )
-    unary()
-  )*
+{  < COMMA > expression()
 }
 
-void unary() :
+void operator() :
 {}
-{
-  < MINUS > element()
-| element()
-}
-
-void element() :
-{}
-{
-  < NUMBER >
-| "(" sum() ")"
+{  < PLUS >
+| < AND >
+| < LESSTHAN >
+| < MINUS >
+| < MULTIPLY >
 }
