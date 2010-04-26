@@ -4,17 +4,18 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class Plus extends Exp {
-  public Exp e1,e2;
-  
-  public Plus(Exp ae1, Exp ae2) { 
-    e1=ae1; e2=ae2;
-  }
+	public Exp exp1, exp2;
 
-  public void accept(Visitor v) {
-    v.visit(this);
-  }
+	public Plus(Exp ae1, Exp ae2) {
+		exp1 = ae1;
+		exp2 = ae2;
+	}
 
-  public Type accept(TypeVisitor v) {
-    return v.visit(this);
-  }
+	public void accept(Visitor v) {
+		v.visit(this);
+	}
+
+	public Type accept(TypeVisitor v) {
+		return v.visit(this);
+	}
 }

@@ -4,12 +4,12 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class Assign extends Statement {
-	public Identifier i;
-	public Exp e;
+	public Identifier identifier;
+	public Exp exp;
 
 	public Assign(Identifier ai, Exp ae) {
-		i = ai;
-		e = ae;
+		identifier = ai;
+		exp = ae;
 	}
 
 	public void accept(Visitor v) {

@@ -4,12 +4,12 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class Formal {
-	public Type t;
-	public Identifier i;
+	public Type type;
+	public Identifier identifier;
 
 	public Formal(Type at, Identifier ai) {
-		t = at;
-		i = ai;
+		type = at;
+		identifier = ai;
 	}
 
 	public void accept(Visitor v) {
