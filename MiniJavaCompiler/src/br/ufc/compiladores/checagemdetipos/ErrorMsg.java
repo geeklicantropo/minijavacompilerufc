@@ -1,6 +1,6 @@
 package br.ufc.compiladores.checagemdetipos;
 
-class ErrorMsg {
+public class ErrorMsg {
 	boolean anyErrors;
 
 	void complain(String msg) {

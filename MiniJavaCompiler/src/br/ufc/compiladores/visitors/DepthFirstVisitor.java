@@ -1,6 +1,7 @@
 package br.ufc.compiladores.visitors;
 
 import br.ufc.compiladores.sintaxeabstrata.*;
+import br.ufc.compiladores.checagemdetipos.ErrorMsg;
 
 public class DepthFirstVisitor implements Visitor {
 
@@ -54,6 +55,21 @@ public class DepthFirstVisitor implements Visitor {
 	public void visit(VarDecl n) {
 		n.type.accept(this);
 		n.identifier.accept(this);
+		ErrorMsg error = new ErrorMsg();
+
+//		Type t = n.type.accept(this);
+//		String id = n.identifier.toString();
+//
+//		if (currMethod == null) {
+//			if (!currClass.addVar(id, t)) {
+//				error.complain(id + "is already defined in "
+//						+ currClass.getId());
+//			}
+//		} else if (!currMethod.addVar(id, t)) {
+//			error.complain(id + "is already defined in " + currClass.getId()
+//					+ "." + currMethod.getId());
+//		}
+
 	}
 
 	// Type t;
