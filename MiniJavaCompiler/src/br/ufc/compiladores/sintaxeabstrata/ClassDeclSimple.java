@@ -4,14 +4,14 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class ClassDeclSimple extends ClassDecl {
-	public Identifier i;
-	public VarDeclList vl;
-	public MethodDeclList ml;
+	public Identifier ident;
+	public VarDeclList varDeclList;
+	public MethodDeclList metDeclList;
 
 	public ClassDeclSimple(Identifier ai, VarDeclList avl, MethodDeclList aml) {
-		i = ai;
-		vl = avl;
-		ml = aml;
+		ident = ai;
+		varDeclList = avl;
+		metDeclList = aml;
 	}
 
 	public void accept(Visitor v) {

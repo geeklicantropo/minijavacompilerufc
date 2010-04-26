@@ -4,10 +4,10 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class Block extends Statement {
-	public StatementList sl;
+	public StatementList statementList;
 
 	public Block(StatementList asl) {
-		sl = asl;
+		statementList = asl;
 	}
 
 	public void accept(Visitor v) {

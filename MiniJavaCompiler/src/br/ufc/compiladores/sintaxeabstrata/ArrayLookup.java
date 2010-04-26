@@ -4,11 +4,11 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class ArrayLookup extends Exp {
-	public Exp e1, e2;
+	public Exp exp1, exp2;
 
 	public ArrayLookup(Exp ae1, Exp ae2) {
-		e1 = ae1;
-		e2 = ae2;
+		exp1 = ae1;
+		exp2 = ae2;
 	}
 
 	public void accept(Visitor v) {

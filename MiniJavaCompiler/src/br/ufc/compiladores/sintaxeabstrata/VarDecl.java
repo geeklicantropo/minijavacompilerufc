@@ -4,11 +4,11 @@ import br.ufc.compiladores.visitors.Visitor;
 import br.ufc.compiladores.visitors.TypeVisitor;
 
 public class VarDecl {
-  public Type t;
-  public Identifier i;
+  public Type type;
+  public Identifier identifier;
   
   public VarDecl(Type at, Identifier ai) {
-    t=at; i=ai;
+    type=at; identifier=ai;
   }
 
   public void accept(Visitor v) {

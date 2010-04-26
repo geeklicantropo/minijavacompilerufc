@@ -4,14 +4,14 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class Call extends Exp {
-	public Exp e;
-	public Identifier i;
-	public ExpList el;
+	public Exp exp;
+	public Identifier identifier;
+	public ExpList expList;
 
 	public Call(Exp ae, Identifier ai, ExpList ael) {
-		e = ae;
-		i = ai;
-		el = ael;
+		exp = ae;
+		identifier = ai;
+		expList = ael;
 	}
 
 	public void accept(Visitor v) {

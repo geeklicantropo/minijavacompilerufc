@@ -4,10 +4,10 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class NewArray extends Exp {
-	public Exp e;
+	public Exp exp;
 
 	public NewArray(Exp ae) {
-		e = ae;
+		exp = ae;
 	}
 
 	public void accept(Visitor v) {

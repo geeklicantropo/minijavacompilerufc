@@ -4,320 +4,329 @@ import br.ufc.compiladores.sintaxeabstrata.*;
 
 public class PrettyPrintVisitor implements Visitor {
 
-  // MainClass m;
-  // ClassDeclList cl;
-  public void visit(Program n) {
-    n.m.accept(this);
-    for ( int i = 0; i < n.cl.size(); i++ ) {
-        System.out.println();
-        n.cl.elementAt(i).accept(this);
-    }
-  }
-  
-  // Identifier i1,i2;
-  // Statement s;
-  public void visit(MainClass n) {
-    System.out.print("class ");
-    n.i1.accept(this);
-    System.out.println(" {");
-    System.out.print("  public static void main (String [] ");
-    n.i2.accept(this);
-    System.out.println(") {");
-    System.out.print("    ");
-    n.s.accept(this);
-    System.out.println("  }");
-    System.out.println("}");
-  }
+	// MainClass m;
+	// ClassDeclList cl;
+	public void visit(Program n) {
+		n.mainClass.accept(this);
+		for (int i = 0; i < n.classDeclList.size(); i++) {
+			System.out.println();
+			n.classDeclList.elementAt(i).accept(this);
+		}
+	}
 
-  // Identifier i;
-  // VarDeclList vl;
-  // MethodDeclList ml;
-  public void visit(ClassDeclSimple n) {
-    System.out.print("class ");
-    n.i.accept(this);
-    System.out.println(" { ");
-    for ( int i = 0; i < n.vl.size(); i++ ) {
-        System.out.print("  ");
-        n.vl.elementAt(i).accept(this);
-        if ( i+1 < n.vl.size() ) { System.out.println(); }
-    }
-    for ( int i = 0; i < n.ml.size(); i++ ) {
-        System.out.println();
-        n.ml.elementAt(i).accept(this);
-    }
-    System.out.println();
-    System.out.println("}");
-  }
- 
-  // Identifier i;
-  // Identifier j;
-  // VarDeclList vl;
-  // MethodDeclList ml;
-  public void visit(ClassDeclExtends n) {
-    System.out.print("class ");
-    n.i.accept(this);
-    System.out.println(" extends ");
-    n.j.accept(this);
-    System.out.println(" { ");
-    for ( int i = 0; i < n.vl.size(); i++ ) {
-        System.out.print("  ");
-        n.vl.elementAt(i).accept(this);
-        if ( i+1 < n.vl.size() ) { System.out.println(); }
-    }
-    for ( int i = 0; i < n.ml.size(); i++ ) {
-        System.out.println();
-        n.ml.elementAt(i).accept(this);
-    }
-    System.out.println();
-    System.out.println("}");
-  }
+	// Identifier i1,i2;
+	// Statement s;
+	public void visit(MainClass n) {
+		System.out.print("class ");
+		n.ident1.accept(this);
+		System.out.println(" {");
+		System.out.print("  public static void main (String [] ");
+		n.ident2.accept(this);
+		System.out.println(") {");
+		System.out.print("    ");
+		n.statement.accept(this);
+		System.out.println("  }");
+		System.out.println("}");
+	}
 
-  // Type t;
-  // Identifier i;
-  public void visit(VarDecl n) {
-    n.t.accept(this);
-    System.out.print(" ");
-    n.i.accept(this);
-    System.out.print(";");
-  }
+	// Identifier i;
+	// VarDeclList vl;
+	// MethodDeclList ml;
+	public void visit(ClassDeclSimple n) {
+		System.out.print("class ");
+		n.ident.accept(this);
+		System.out.println(" { ");
+		for (int i = 0; i < n.varDeclList.size(); i++) {
+			System.out.print("  ");
+			n.varDeclList.elementAt(i).accept(this);
+			if (i + 1 < n.varDeclList.size()) {
+				System.out.println();
+			}
+		}
+		for (int i = 0; i < n.metDeclList.size(); i++) {
+			System.out.println();
+			n.metDeclList.elementAt(i).accept(this);
+		}
+		System.out.println();
+		System.out.println("}");
+	}
 
-  // Type t;
-  // Identifier i;
-  // FormalList fl;
-  // VarDeclList vl;
-  // StatementList sl;
-  // Exp e;
-  public void visit(MethodDecl n) {
-    System.out.print("  public ");
-    n.t.accept(this);
-    System.out.print(" ");
-    n.i.accept(this);
-    System.out.print(" (");
-    for ( int i = 0; i < n.fl.size(); i++ ) {
-        n.fl.elementAt(i).accept(this);
-        if (i+1 < n.fl.size()) { System.out.print(", "); }
-    }
-    System.out.println(") { ");
-    for ( int i = 0; i < n.vl.size(); i++ ) {
-        System.out.print("    ");
-        n.vl.elementAt(i).accept(this);
-        System.out.println("");
-    }
-    for ( int i = 0; i < n.sl.size(); i++ ) {
-        System.out.print("    ");
-        n.sl.elementAt(i).accept(this);
-        if ( i < n.sl.size() ) { System.out.println(""); }
-    }
-    System.out.print("    return ");
-    n.e.accept(this);
-    System.out.println(";");
-    System.out.print("  }");
-  }
+	// Identifier i;
+	// Identifier j;
+	// VarDeclList vl;
+	// MethodDeclList ml;
+	public void visit(ClassDeclExtends n) {
+		System.out.print("class ");
+		n.ident1.accept(this);
+		System.out.println(" extends ");
+		n.ident2.accept(this);
+		System.out.println(" { ");
+		for (int i = 0; i < n.varDeclList.size(); i++) {
+			System.out.print("  ");
+			n.varDeclList.elementAt(i).accept(this);
+			if (i + 1 < n.varDeclList.size()) {
+				System.out.println();
+			}
+		}
+		for (int i = 0; i < n.metDeclList.size(); i++) {
+			System.out.println();
+			n.metDeclList.elementAt(i).accept(this);
+		}
+		System.out.println();
+		System.out.println("}");
+	}
 
-  // Type t;
-  // Identifier i;
-  public void visit(Formal n) {
-    n.t.accept(this);
-    System.out.print(" ");
-    n.i.accept(this);
-  }
+	// Type t;
+	// Identifier i;
+	public void visit(VarDecl n) {
+		n.type.accept(this);
+		System.out.print(" ");
+		n.identifier.accept(this);
+		System.out.print(";");
+	}
 
-  public void visit(IntArrayType n) {
-    System.out.print("int []");
-  }
+	// Type t;
+	// Identifier i;
+	// FormalList fl;
+	// VarDeclList vl;
+	// StatementList sl;
+	// Exp e;
+	public void visit(MethodDecl n) {
+		System.out.print("  public ");
+		n.type.accept(this);
+		System.out.print(" ");
+		n.identifier.accept(this);
+		System.out.print(" (");
+		for (int i = 0; i < n.formalList.size(); i++) {
+			n.formalList.elementAt(i).accept(this);
+			if (i + 1 < n.formalList.size()) {
+				System.out.print(", ");
+			}
+		}
+		System.out.println(") { ");
+		for (int i = 0; i < n.varDeclList.size(); i++) {
+			System.out.print("    ");
+			n.varDeclList.elementAt(i).accept(this);
+			System.out.println("");
+		}
+		for (int i = 0; i < n.statementList.size(); i++) {
+			System.out.print("    ");
+			n.statementList.elementAt(i).accept(this);
+			if (i < n.statementList.size()) {
+				System.out.println("");
+			}
+		}
+		System.out.print("    return ");
+		n.exp.accept(this);
+		System.out.println(";");
+		System.out.print("  }");
+	}
 
-  public void visit(BooleanType n) {
-    System.out.print("boolean");
-  }
+	// Type t;
+	// Identifier i;
+	public void visit(Formal n) {
+		n.type.accept(this);
+		System.out.print(" ");
+		n.identifier.accept(this);
+	}
 
-  public void visit(IntegerType n) {
-    System.out.print("int");
-  }
+	public void visit(IntArrayType n) {
+		System.out.print("int []");
+	}
 
-  // String s;
-  public void visit(IdentifierType n) {
-    System.out.print(n.s);
-  }
+	public void visit(BooleanType n) {
+		System.out.print("boolean");
+	}
 
-  // StatementList sl;
-  public void visit(Block n) {
-    System.out.println("{ ");
-    for ( int i = 0; i < n.sl.size(); i++ ) {
-        System.out.print("      ");
-        n.sl.elementAt(i).accept(this);
-        System.out.println();
-    }
-    System.out.print("    } ");
-  }
+	public void visit(IntegerType n) {
+		System.out.print("int");
+	}
 
-  // Exp e;
-  // Statement s1,s2;
-  public void visit(If n) {
-    System.out.print("if (");
-    n.e.accept(this);
-    System.out.println(") ");
-    System.out.print("    ");
-    n.s1.accept(this);
-    System.out.println();
-    System.out.print("    else ");
-    n.s2.accept(this);
-  }
+	// String s;
+	public void visit(IdentifierType n) {
+		System.out.print(n.s);
+	}
 
-  // Exp e;
-  // Statement s;
-  public void visit(While n) {
-    System.out.print("while (");
-    n.e.accept(this);
-    System.out.print(") ");
-    n.s.accept(this);
-  }
+	// StatementList sl;
+	public void visit(Block n) {
+		System.out.println("{ ");
+		for (int i = 0; i < n.statementList.size(); i++) {
+			System.out.print("      ");
+			n.statementList.elementAt(i).accept(this);
+			System.out.println();
+		}
+		System.out.print("    } ");
+	}
 
-  // Exp e;
-  public void visit(Print n) {
-    System.out.print("System.out.println(");
-    n.e.accept(this);
-    System.out.print(");");
-  }
-  
-  // Identifier i;
-  // Exp e;
-  public void visit(Assign n) {
-    n.i.accept(this);
-    System.out.print(" = ");
-    n.e.accept(this);
-    System.out.print(";");
-  }
+	// Exp e;
+	// Statement s1,s2;
+	public void visit(If n) {
+		System.out.print("if (");
+		n.exp.accept(this);
+		System.out.println(") ");
+		System.out.print("    ");
+		n.stat1.accept(this);
+		System.out.println();
+		System.out.print("    else ");
+		n.stat2.accept(this);
+	}
 
-  // Identifier i;
-  // Exp e1,e2;
-  public void visit(ArrayAssign n) {
-    n.i.accept(this);
-    System.out.print("[");
-    n.e1.accept(this);
-    System.out.print("] = ");
-    n.e2.accept(this);
-    System.out.print(";");
-  }
+	// Exp e;
+	// Statement s;
+	public void visit(While n) {
+		System.out.print("while (");
+		n.exp.accept(this);
+		System.out.print(") ");
+		n.statement.accept(this);
+	}
 
-  // Exp e1,e2;
-  public void visit(And n) {
-    System.out.print("(");
-    n.e1.accept(this);
-    System.out.print(" && ");
-    n.e2.accept(this);
-    System.out.print(")");
-  }
+	// Exp e;
+	public void visit(Print n) {
+		System.out.print("System.out.println(");
+		n.exp.accept(this);
+		System.out.print(");");
+	}
 
-  // Exp e1,e2;
-  public void visit(LessThan n) {
-    System.out.print("(");
-    n.e1.accept(this);
-    System.out.print(" < ");
-    n.e2.accept(this);
-    System.out.print(")");
-  }
+	// Identifier i;
+	// Exp e;
+	public void visit(Assign n) {
+		n.identifier.accept(this);
+		System.out.print(" = ");
+		n.exp.accept(this);
+		System.out.print(";");
+	}
 
-  // Exp e1,e2;
-  public void visit(Plus n) {
-    System.out.print("(");
-    n.e1.accept(this);
-    System.out.print(" + ");
-    n.e2.accept(this);
-    System.out.print(")");
-  }
+	// Identifier i;
+	// Exp e1,e2;
+	public void visit(ArrayAssign n) {
+		n.identifier.accept(this);
+		System.out.print("[");
+		n.exp1.accept(this);
+		System.out.print("] = ");
+		n.exp2.accept(this);
+		System.out.print(";");
+	}
 
-  // Exp e1,e2;
-  public void visit(Minus n) {
-    System.out.print("(");
-    n.e1.accept(this);
-    System.out.print(" - ");
-    n.e2.accept(this);
-    System.out.print(")");
-  }
+	// Exp e1,e2;
+	public void visit(And n) {
+		System.out.print("(");
+		n.exp1.accept(this);
+		System.out.print(" && ");
+		n.exp2.accept(this);
+		System.out.print(")");
+	}
 
-  // Exp e1,e2;
-  public void visit(Times n) {
-    System.out.print("(");
-    n.e1.accept(this);
-    System.out.print(" * ");
-    n.e2.accept(this);
-    System.out.print(")");
-  }
+	// Exp e1,e2;
+	public void visit(LessThan n) {
+		System.out.print("(");
+		n.exp1.accept(this);
+		System.out.print(" < ");
+		n.exp2.accept(this);
+		System.out.print(")");
+	}
 
-  // Exp e1,e2;
-  public void visit(ArrayLookup n) {
-    n.e1.accept(this);
-    System.out.print("[");
-    n.e2.accept(this);
-    System.out.print("]");
-  }
+	// Exp e1,e2;
+	public void visit(Plus n) {
+		System.out.print("(");
+		n.exp1.accept(this);
+		System.out.print(" + ");
+		n.exp2.accept(this);
+		System.out.print(")");
+	}
 
-  // Exp e;
-  public void visit(ArrayLength n) {
-    n.e.accept(this);
-    System.out.print(".length");
-  }
+	// Exp e1,e2;
+	public void visit(Minus n) {
+		System.out.print("(");
+		n.exp1.accept(this);
+		System.out.print(" - ");
+		n.exp2.accept(this);
+		System.out.print(")");
+	}
 
-  // Exp e;
-  // Identifier i;
-  // ExpList el;
-  public void visit(Call n) {
-    n.e.accept(this);
-    System.out.print(".");
-    n.i.accept(this);
-    System.out.print("(");
-    for ( int i = 0; i < n.el.size(); i++ ) {
-        n.el.elementAt(i).accept(this);
-        if ( i+1 < n.el.size() ) { System.out.print(", "); }
-    }
-    System.out.print(")");
-  }
+	// Exp e1,e2;
+	public void visit(Times n) {
+		System.out.print("(");
+		n.exp1.accept(this);
+		System.out.print(" * ");
+		n.exp2.accept(this);
+		System.out.print(")");
+	}
 
-  // int i;
-  public void visit(IntegerLiteral n) {
-    System.out.print(n.i);
-  }
+	// Exp e1,e2;
+	public void visit(ArrayLookup n) {
+		n.exp1.accept(this);
+		System.out.print("[");
+		n.exp2.accept(this);
+		System.out.print("]");
+	}
 
-  public void visit(True n) {
-    System.out.print("true");
-  }
+	// Exp e;
+	public void visit(ArrayLength n) {
+		n.exp.accept(this);
+		System.out.print(".length");
+	}
 
-  public void visit(False n) {
-    System.out.print("false");
-  }
+	// Exp e;
+	// Identifier i;
+	// ExpList el;
+	public void visit(Call n) {
+		n.exp.accept(this);
+		System.out.print(".");
+		n.identifier.accept(this);
+		System.out.print("(");
+		for (int i = 0; i < n.expList.size(); i++) {
+			n.expList.elementAt(i).accept(this);
+			if (i + 1 < n.expList.size()) {
+				System.out.print(", ");
+			}
+		}
+		System.out.print(")");
+	}
 
-  // String s;
-  public void visit(IdentifierExp n) {
-    System.out.print(n.s);
-  }
+	// int i;
+	public void visit(IntegerLiteral n) {
+		System.out.print(n.i);
+	}
 
-  public void visit(This n) {
-    System.out.print("this");
-  }
+	public void visit(True n) {
+		System.out.print("true");
+	}
 
-  // Exp e;
-  public void visit(NewArray n) {
-    System.out.print("new int [");
-    n.e.accept(this);
-    System.out.print("]");
-  }
+	public void visit(False n) {
+		System.out.print("false");
+	}
 
-  // Identifier i;
-  public void visit(NewObject n) {
-    System.out.print("new ");
-    System.out.print(n.i.s);
-    System.out.print("()");
-  }
+	// String s;
+	public void visit(IdentifierExp n) {
+		System.out.print(n.s);
+	}
 
-  // Exp e;
-  public void visit(Not n) {
-    System.out.print("!");
-    n.e.accept(this);
-  }
+	public void visit(This n) {
+		System.out.print("this");
+	}
 
-  // String s;
-  public void visit(Identifier n) {
-    System.out.print(n.s);
-  }
+	// Exp e;
+	public void visit(NewArray n) {
+		System.out.print("new int [");
+		n.exp.accept(this);
+		System.out.print("]");
+	}
+
+	// Identifier i;
+	public void visit(NewObject n) {
+		System.out.print("new ");
+		System.out.print(n.i.s);
+		System.out.print("()");
+	}
+
+	// Exp e;
+	public void visit(Not n) {
+		System.out.print("!");
+		n.e.accept(this);
+	}
+
+	// String s;
+	public void visit(Identifier n) {
+		System.out.print(n.s);
+	}
 }
-
