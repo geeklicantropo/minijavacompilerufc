@@ -4,6 +4,7 @@
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import br.ufc.compiladores.sintaxeabstrata.*;
 
 public class MiniJavaParser{  public static void main(String args []) throws ParseException, IOException  {
 	    FileInputStream fileInputStream = new FileInputStream("JavaFiles/teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInputStream);
@@ -74,49 +75,104 @@ TOKEN :
 | < #DIGIT : ["0" - "9"] >
 | < INT_LITERAL: (< DIGIT >)+ >| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)* >
 }
-void program() :
-{}
+Program program() :
 {
-  mainClass() ( classDeclaration() )*
+  MainClass main; 
+  ClassDecl classDeclaration;
+  ClassDeclList classList = new ClassDeclList();
+}
+{
+  main=mainClass() 
+  (
+    classDeclaration=classDeclaration() { classList.addElement(classDeclaration); }
+  )*
+  { return new Program(main, classList); }
 }
 
-void mainClass() :
-{}
+MainClass mainClass() :
 {
-  < CLASS > < ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET > < ID > < RPAREN > < LBRACES >
-  statement() < RBRACES >
+  Statement statement;
+  String classId, argsId;
+}
+{
+  < CLASS > classId=< ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET > argsId=< ID > < RPAREN > < LBRACES >
+  statement=statement() < RBRACES >
   < RBRACES >
+  {    return new MainClass(statement, new Identifier(classId), new Identifier(argsId));
+  }
 }
 
-void classDeclaration() :
-{}
+ClassDecl classDeclaration() :
 {
-  < CLASS > < ID > classDeclarationBlock()
+  String classId;
+  ClassDecl classDeclaration;
+}
+{
+  < CLASS > classId=< ID > classDeclaration=classDeclarationTail(classId)
+  {
+    return classDeclaration;
+  }
 }
 
-void classDeclarationBlock() :
-{}
+ClassDecl classDeclarationTail(String classId) :
 {
+  String superId;
+  VarDeclList vars = new VarDeclList();
+  MethodDeclList methods = new MethodDeclList();
+  VarDecl var;
+  MethodDecl method;
+}
+{
+  ( 
   < LBRACES >
-  ( varDeclaration() )* ( methodDeclaration() )* < RBRACES >
-| < EXTENDS > < ID > < LBRACES >
-  ( varDeclaration() )* ( methodDeclaration() )* < RBRACES >
+  (
+    var=varDeclaration() { vars.addElement(var); }  
+  )*
+  (
+    method=methodDeclaration() { methods.addElement(method); }
+  )* < RBRACES >
+  
+  { return new ClassDeclSimple(classId, vars, methods); }
+  
+  )
+| (
+  < EXTENDS > superId=< ID > < LBRACES >
+  (
+    var=varDeclaration() { vars.addElement(var); }  
+  )*
+  (
+    method=methodDeclaration() { methods.addElement(method); }
+  )* < RBRACES >
+  
+  { return new ClassDeclExtends(classId, superId, vars, methods); }
+  )
 }
 
-void varDeclaration() :
-{}
+VarDecl varDeclaration() :
 {
-  < ID > < ID > < SEMICOLON >
-|  varDeclarationNoID()}
-
-void varDeclarationNoID() :
-{}
+  String typeId;
+  String varId;
+  VarDecl var;
+}
 {
-  typeNoID() < ID > < SEMICOLON >
+  (    typeId=< ID > varId=< ID > < SEMICOLON >
+    { return new VarDecl(new IdentifierType(typeId), new Identifier(varId)); }
+  )  
+|  var=varDeclarationNoID() { return var; }
 }
 
-void methodDeclaration() :
-{}
+VarDecl varDeclarationNoID() :
+{
+  Type type;
+  String varId;
+}
+{
+  type=typeNoID() varId=< ID > < SEMICOLON >  { return new VarDecl(type, new Identifier(varId)); }
+}
+
+MethodDecl methodDeclaration() :
+{
+}
 {
   < PUBLIC > type() < ID > < LPAREN > parameterList() < RPAREN > < LBRACES >
   methodLoop() < RETURN > expression() < SEMICOLON > < RBRACES >
@@ -238,7 +294,7 @@ void operator() :
 {}
 {  < PLUS >
 | < AND >
-| < LESSTHAN >
+| < LESSTHAN > 
 | < MINUS >
 | < MULTIPLY >
 }
