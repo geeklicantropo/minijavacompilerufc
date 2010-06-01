@@ -1,11 +1,45 @@
 package br.ufc.compiladores.visitors;
 
-import br.ufc.compiladores.sintaxeabstrata.*;
+import br.ufc.compiladores.sintaxeabstrata.And;
+import br.ufc.compiladores.sintaxeabstrata.ArrayAssign;
+import br.ufc.compiladores.sintaxeabstrata.ArrayLength;
+import br.ufc.compiladores.sintaxeabstrata.ArrayLookup;
+import br.ufc.compiladores.sintaxeabstrata.Assign;
+import br.ufc.compiladores.sintaxeabstrata.Block;
+import br.ufc.compiladores.sintaxeabstrata.BooleanType;
+import br.ufc.compiladores.sintaxeabstrata.Call;
+import br.ufc.compiladores.sintaxeabstrata.ClassDeclExtends;
+import br.ufc.compiladores.sintaxeabstrata.ClassDeclSimple;
+import br.ufc.compiladores.sintaxeabstrata.False;
+import br.ufc.compiladores.sintaxeabstrata.Formal;
+import br.ufc.compiladores.sintaxeabstrata.Identifier;
+import br.ufc.compiladores.sintaxeabstrata.IdentifierExp;
+import br.ufc.compiladores.sintaxeabstrata.IdentifierType;
+import br.ufc.compiladores.sintaxeabstrata.If;
+import br.ufc.compiladores.sintaxeabstrata.IntArrayType;
+import br.ufc.compiladores.sintaxeabstrata.IntegerLiteral;
+import br.ufc.compiladores.sintaxeabstrata.IntegerType;
+import br.ufc.compiladores.sintaxeabstrata.LessThan;
+import br.ufc.compiladores.sintaxeabstrata.MainClass;
+import br.ufc.compiladores.sintaxeabstrata.MethodDecl;
+import br.ufc.compiladores.sintaxeabstrata.Minus;
+import br.ufc.compiladores.sintaxeabstrata.NewArray;
+import br.ufc.compiladores.sintaxeabstrata.NewObject;
+import br.ufc.compiladores.sintaxeabstrata.Not;
+import br.ufc.compiladores.sintaxeabstrata.Plus;
+import br.ufc.compiladores.sintaxeabstrata.Print;
+import br.ufc.compiladores.sintaxeabstrata.Program;
+import br.ufc.compiladores.sintaxeabstrata.This;
+import br.ufc.compiladores.sintaxeabstrata.Times;
+import br.ufc.compiladores.sintaxeabstrata.True;
+import br.ufc.compiladores.sintaxeabstrata.Type;
+import br.ufc.compiladores.sintaxeabstrata.VarDecl;
+import br.ufc.compiladores.sintaxeabstrata.While;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
 
-	// MainClass m;
-	// ClassDeclList cl;
+	// MainClass mainClass;
+	// ClassDeclList classDeclList;
 	public Type visit(Program n) {
 		n.mainClass.accept(this);
 		for (int i = 0; i < n.classDeclList.size(); i++) {
@@ -14,8 +48,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Identifier i1,i2;
-	// Statement s;
+	// Identifier ident1,ident2;
+	// Statement statement;
 	public Type visit(MainClass n) {
 		n.ident1.accept(this);
 		n.ident2.accept(this);
@@ -23,9 +57,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Identifier i;
-	// VarDeclList vl;
-	// MethodDeclList ml;
+	// Identifier ident;
+	// VarDeclList varDeclList;
+	// MethodDeclList metDeclList;
 	public Type visit(ClassDeclSimple n) {
 		n.ident.accept(this);
 		for (int i = 0; i < n.varDeclList.size(); i++) {
@@ -37,10 +71,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Identifier i;
-	// Identifier j;
-	// VarDeclList vl;
-	// MethodDeclList ml;
+	// Identifier ident1, ident2;
+	// VarDeclList varDeclList;
+	// MethodDeclList metDeclList;
 	public Type visit(ClassDeclExtends n) {
 		n.ident1.accept(this);
 		n.ident2.accept(this);
@@ -53,20 +86,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Type t;
-	// Identifier i;
+	// Type type;
+	// Identifier identifier;
 	public Type visit(VarDecl n) {
 		n.type.accept(this);
 		n.identifier.accept(this);
 		return null;
 	}
 
-	// Type t;
-	// Identifier i;
-	// FormalList fl;
-	// VarDeclList vl;
-	// StatementList sl;
-	// Exp e;
+	// Type type;
+	// Identifier identifier;
+	// FormalList formalList;
+	// VarDeclList varDeclList;
+	// StatementList statementList;
+	// Exp exp;
 	public Type visit(MethodDecl n) {
 		n.type.accept(this);
 		n.identifier.accept(this);
@@ -83,8 +116,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Type t;
-	// Identifier i;
+	// Type type;
+	// Identifier identifier;
 	public Type visit(Formal n) {
 		n.type.accept(this);
 		n.identifier.accept(this);
@@ -108,7 +141,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// StatementList sl;
+	// StatementList statementList;
 	public Type visit(Block n) {
 		for (int i = 0; i < n.statementList.size(); i++) {
 			n.statementList.elementAt(i).accept(this);
@@ -116,8 +149,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Exp e;
-	// Statement s1,s2;
+	// Exp exp;
+	// Statement stat1,stat2;
 	public Type visit(If n) {
 		n.exp.accept(this);
 		n.stat1.accept(this);
@@ -125,30 +158,30 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Exp e;
-	// Statement s;
+	// Exp exp;
+	// Statement statement;
 	public Type visit(While n) {
 		n.exp.accept(this);
 		n.statement.accept(this);
 		return null;
 	}
 
-	// Exp e;
+	// Exp exp;
 	public Type visit(Print n) {
 		n.exp.accept(this);
 		return null;
 	}
 
-	// Identifier i;
-	// Exp e;
+	// Identifier identifier;
+	// Exp exp;
 	public Type visit(Assign n) {
 		n.identifier.accept(this);
 		n.exp.accept(this);
 		return null;
 	}
 
-	// Identifier i;
-	// Exp e1,e2;
+	// Identifier identifier;
+	// Exp exp1,exp2;
 	public Type visit(ArrayAssign n) {
 		n.identifier.accept(this);
 		n.exp1.accept(this);
@@ -156,57 +189,57 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public Type visit(And n) {
 		n.exp1.accept(this);
 		n.exp2.accept(this);
 		return null;
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public Type visit(LessThan n) {
 		n.exp1.accept(this);
 		n.exp2.accept(this);
 		return null;
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public Type visit(Plus n) {
 		n.exp1.accept(this);
 		n.exp2.accept(this);
 		return null;
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public Type visit(Minus n) {
 		n.exp1.accept(this);
 		n.exp2.accept(this);
 		return null;
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public Type visit(Times n) {
 		n.exp1.accept(this);
 		n.exp2.accept(this);
 		return null;
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public Type visit(ArrayLookup n) {
 		n.exp1.accept(this);
 		n.exp2.accept(this);
 		return null;
 	}
 
-	// Exp e;
+	// Exp exp;
 	public Type visit(ArrayLength n) {
 		n.exp.accept(this);
 		return null;
 	}
 
-	// Exp e;
-	// Identifier i;
-	// ExpList el;
+	// Exp exp;
+	// Identifier identifier;
+	// ExpList expList;
 	public Type visit(Call n) {
 		n.exp.accept(this);
 		n.identifier.accept(this);
@@ -238,7 +271,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Exp e;
+	// Exp exp;
 	public Type visit(NewArray n) {
 		n.exp.accept(this);
 		return null;
@@ -249,9 +282,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 		return null;
 	}
 
-	// Exp e;
+	// Exp exp;
 	public Type visit(Not n) {
-		n.e.accept(this);
+		n.exp.accept(this);
 		return null;
 	}
 
