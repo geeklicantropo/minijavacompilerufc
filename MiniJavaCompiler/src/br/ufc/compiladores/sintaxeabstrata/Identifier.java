@@ -4,10 +4,10 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class Identifier {
-	public String s;
+	public String str;
 
 	public Identifier(String as) {
-		s = as;
+		str = as;
 	}
 
 	public void accept(Visitor v) {
@@ -19,6 +19,6 @@ public class Identifier {
 	}
 
 	public String toString() {
-		return s;
+		return str;
 	}
 }

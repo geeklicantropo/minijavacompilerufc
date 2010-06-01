@@ -5,10 +5,10 @@ import br.ufc.compiladores.visitors.Visitor;
 
 
 public class NewObject extends Exp {
-  public Identifier i;
+  public Identifier identifier;
   
   public NewObject(Identifier ai) {
-    i=ai;
+    identifier=ai;
   }
 
   public void accept(Visitor v) {

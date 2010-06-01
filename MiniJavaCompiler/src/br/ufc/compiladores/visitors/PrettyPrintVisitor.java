@@ -4,8 +4,8 @@ import br.ufc.compiladores.sintaxeabstrata.*;
 
 public class PrettyPrintVisitor implements Visitor {
 
-	// MainClass m;
-	// ClassDeclList cl;
+	// MainClass mainClass;
+	// ClassDeclList classDeclList;
 	public void visit(Program n) {
 		n.mainClass.accept(this);
 		for (int i = 0; i < n.classDeclList.size(); i++) {
@@ -14,8 +14,8 @@ public class PrettyPrintVisitor implements Visitor {
 		}
 	}
 
-	// Identifier i1,i2;
-	// Statement s;
+	// Identifier ident1,ident2;
+	// Statement statement;
 	public void visit(MainClass n) {
 		System.out.print("class ");
 		n.ident1.accept(this);
@@ -29,9 +29,9 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.println("}");
 	}
 
-	// Identifier i;
-	// VarDeclList vl;
-	// MethodDeclList ml;
+	// Identifier ident;
+	// VarDeclList varDeclList;
+	// MethodDeclList metDeclList;
 	public void visit(ClassDeclSimple n) {
 		System.out.print("class ");
 		n.ident.accept(this);
@@ -51,10 +51,10 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.println("}");
 	}
 
-	// Identifier i;
-	// Identifier j;
-	// VarDeclList vl;
-	// MethodDeclList ml;
+	// Identifier ident1;
+	// Identifier ident2;
+	// VarDeclList varDeclList;
+	// MethodDeclList metDeclList;
 	public void visit(ClassDeclExtends n) {
 		System.out.print("class ");
 		n.ident1.accept(this);
@@ -76,8 +76,8 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.println("}");
 	}
 
-	// Type t;
-	// Identifier i;
+	// Type type;
+	// Identifier identifier;
 	public void visit(VarDecl n) {
 		n.type.accept(this);
 		System.out.print(" ");
@@ -85,12 +85,12 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(";");
 	}
 
-	// Type t;
-	// Identifier i;
-	// FormalList fl;
-	// VarDeclList vl;
-	// StatementList sl;
-	// Exp e;
+	// Type type;
+	// Identifier identifier;
+	// FormalList formalList;
+	// VarDeclList varDeclList;
+	// StatementList statementList;
+	// Exp exp;
 	public void visit(MethodDecl n) {
 		System.out.print("  public ");
 		n.type.accept(this);
@@ -122,8 +122,8 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print("  }");
 	}
 
-	// Type t;
-	// Identifier i;
+	// Type type;
+	// Identifier identifier;
 	public void visit(Formal n) {
 		n.type.accept(this);
 		System.out.print(" ");
@@ -147,7 +147,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(n.s);
 	}
 
-	// StatementList sl;
+	// StatementList statementList;
 	public void visit(Block n) {
 		System.out.println("{ ");
 		for (int i = 0; i < n.statementList.size(); i++) {
@@ -158,8 +158,8 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print("    } ");
 	}
 
-	// Exp e;
-	// Statement s1,s2;
+	// Exp exp;
+	// Statement stat1,stat2;
 	public void visit(If n) {
 		System.out.print("if (");
 		n.exp.accept(this);
@@ -171,8 +171,8 @@ public class PrettyPrintVisitor implements Visitor {
 		n.stat2.accept(this);
 	}
 
-	// Exp e;
-	// Statement s;
+	// Exp exp;
+	// Statement statement;
 	public void visit(While n) {
 		System.out.print("while (");
 		n.exp.accept(this);
@@ -180,15 +180,15 @@ public class PrettyPrintVisitor implements Visitor {
 		n.statement.accept(this);
 	}
 
-	// Exp e;
+	// Exp exp;
 	public void visit(Print n) {
 		System.out.print("System.out.println(");
 		n.exp.accept(this);
 		System.out.print(");");
 	}
 
-	// Identifier i;
-	// Exp e;
+	// Identifier identifier;
+	// Exp exp;
 	public void visit(Assign n) {
 		n.identifier.accept(this);
 		System.out.print(" = ");
@@ -196,8 +196,8 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(";");
 	}
 
-	// Identifier i;
-	// Exp e1,e2;
+	// Identifier identifier;
+	// Exp exp1,exp2;
 	public void visit(ArrayAssign n) {
 		n.identifier.accept(this);
 		System.out.print("[");
@@ -207,7 +207,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(";");
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public void visit(And n) {
 		System.out.print("(");
 		n.exp1.accept(this);
@@ -216,7 +216,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(")");
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public void visit(LessThan n) {
 		System.out.print("(");
 		n.exp1.accept(this);
@@ -225,7 +225,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(")");
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public void visit(Plus n) {
 		System.out.print("(");
 		n.exp1.accept(this);
@@ -234,7 +234,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(")");
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public void visit(Minus n) {
 		System.out.print("(");
 		n.exp1.accept(this);
@@ -243,7 +243,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(")");
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public void visit(Times n) {
 		System.out.print("(");
 		n.exp1.accept(this);
@@ -252,7 +252,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print(")");
 	}
 
-	// Exp e1,e2;
+	// Exp exp1,exp2;
 	public void visit(ArrayLookup n) {
 		n.exp1.accept(this);
 		System.out.print("[");
@@ -260,15 +260,15 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print("]");
 	}
 
-	// Exp e;
+	// Exp exp;
 	public void visit(ArrayLength n) {
 		n.exp.accept(this);
 		System.out.print(".length");
 	}
 
-	// Exp e;
-	// Identifier i;
-	// ExpList el;
+	// Exp exp;
+	// Identifier identifier;
+	// ExpList expList;
 	public void visit(Call n) {
 		n.exp.accept(this);
 		System.out.print(".");
@@ -305,7 +305,7 @@ public class PrettyPrintVisitor implements Visitor {
 		System.out.print("this");
 	}
 
-	// Exp e;
+	// Exp exp;
 	public void visit(NewArray n) {
 		System.out.print("new int [");
 		n.exp.accept(this);
@@ -315,18 +315,18 @@ public class PrettyPrintVisitor implements Visitor {
 	// Identifier i;
 	public void visit(NewObject n) {
 		System.out.print("new ");
-		System.out.print(n.i.s);
+		System.out.print(n.identifier.str);
 		System.out.print("()");
 	}
 
 	// Exp e;
 	public void visit(Not n) {
 		System.out.print("!");
-		n.e.accept(this);
+		n.exp.accept(this);
 	}
 
 	// String s;
 	public void visit(Identifier n) {
-		System.out.print(n.s);
+		System.out.print(n.str);
 	}
 }
