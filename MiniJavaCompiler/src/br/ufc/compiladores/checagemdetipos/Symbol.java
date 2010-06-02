@@ -6,7 +6,7 @@ import java.util.Hashtable;
 public class Symbol {
 	private String name;
 
-	private static Dictionary dict = new Hashtable();
+	private static Dictionary<String, Symbol> dict = new Hashtable<String, Symbol>();
 
 	private Symbol(String n) {
 		name = n;
