@@ -1,6 +1,7 @@
 package br.ufc.compiladores.checagemdetipos;
 
 import br.ufc.compiladores.sintaxeabstrata.Type;
+import br.ufc.compiladores.symbol.Symbol;
 
 public class CurrentMethod {
 
