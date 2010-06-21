@@ -4,10 +4,10 @@ import br.ufc.compiladores.visitors.TypeVisitor;
 import br.ufc.compiladores.visitors.Visitor;
 
 public class IdentifierType extends Type {
-	public String s;
+	public String str;
 
-	public IdentifierType(String as) {
-		s = as;
+	public IdentifierType(String str) {
+		this.str = str;
 	}
 
 	public void accept(Visitor v) {
