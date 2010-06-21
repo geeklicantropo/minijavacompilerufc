@@ -1,6 +1,6 @@
 package br.ufc.compiladores.registrosdeativacao;
 
-import br.ufc.compiladores.checagemdetipos.Symbol;
+import br.ufc.compiladores.symbol.Symbol;
 
 public class Label {
 	private String name;
