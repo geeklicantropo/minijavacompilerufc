@@ -1,0 +1,356 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(MiniJavaParser)package br.ufc.compiladores.analisadorlexico;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import br.ufc.compiladores.sintaxeabstrata.*;
+
+public class MiniJavaParser{  public static void main(String args []) throws ParseException, IOException  {
+	    FileInputStream fileInputStream = new FileInputStream("JavaFiles/teste.java");      MiniJavaParser parser = new MiniJavaParser(fileInputStream);
+    System.out.println("Lendo arquivo teste.java, do diretório ../JavaFiles");
+        try    {      MiniJavaParser.program();      System.out.println("OK!");    }    catch (Exception e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(MiniJavaParser)SKIP :
+{
+  < "/" "/" ( ~[ "\n", "\r" ] )* ( "\n" | "\r" | "\r\n" ) >
+| < "/" "*" ( ~[ "*" ] | "*" ~[ "/" ] )* "*/" >
+| " "
+| "\r"
+| "\r\n"
+| "\n"
+| "\t"
+}
+
+TOKEN : /* Operadores e Simbolos */
+{
+  < PLUS : "+" >
+| < AND : "&&" >
+| < LESSTHAN :"<" >
+| < MINUS : "-" >
+| < MULTIPLY : "*" >
+| < NOT : "!" >
+| < SEMICOLON : ";" >
+| < COMMA : "," >
+| < DOT : "." >
+| < EQUAL: "=" >
+| < LBRACKET : "[" >
+| < RBRACKET : "]" >
+| < LBRACES : "{" >
+| < RBRACES : "}" >
+| < LPAREN : "(" >
+| < RPAREN : ")" >
+| < ULINE : "_" >
+}
+
+TOKEN : /* Palavras Reservadas */
+{
+  < PUBLIC : "public" >
+| < STATIC : "static" >
+| < TRUE : "true" >
+| < FALSE : "false" >
+| < VOID : "void" >
+| < MAIN : "main" >
+| < EXTENDS : "extends" >
+| < RETURN : "return" >
+| < IF : "if" >
+| < ELSE: "else" >
+| < WHILE: "while" >
+| < SYSOUT: "System.out.println" >
+| < CLASS: "class" >
+| < THIS: "this" >
+| < NEW: "new" >
+| < LENGTH: "length" >
+| < STRING: "String" >
+}
+
+TOKEN : /* Tipos */
+{
+  	< INT : "int" >
+| < INTARRAY : "int[]" >
+| < BOOLEAN : "boolean" >
+}
+
+TOKEN :
+{
+  < #LETTER : ["a" - "z"] | ["A" - "Z"] >
+| < #DIGIT : ["0" - "9"] >
+| < INT_LITERAL: (< DIGIT >)+ >| < ID: < LETTER > (< LETTER > | < ULINE > | < DIGIT >)* >
+}
+Program program() :
+{
+  MainClass main; 
+  ClassDecl classDeclaration;
+  ClassDeclList classList = new ClassDeclList();
+}
+{
+  main=mainClass() 
+  (
+    classDeclaration=classDeclaration() { classList.addElement(classDeclaration); }
+  )*
+  { return new Program(main, classList); }
+}
+
+MainClass mainClass() :
+{
+  Statement statement;
+  Token classId, argsId;
+}
+{
+  < CLASS > classId=< ID > < LBRACES > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET > < RBRACKET > argsId=< ID > < RPAREN > < LBRACES >
+  statement=statement() < RBRACES >
+  < RBRACES >
+  {    return new MainClass(new Identifier(classId.toString()), new Identifier(argsId.toString()), statement);
+  }
+}
+
+ClassDecl classDeclaration() :
+{
+  Token classId;
+  ClassDecl classDeclaration;
+}
+{
+  < CLASS > classId=< ID > classDeclaration=classDeclarationTail(classId)
+  {
+    return classDeclaration;
+  }
+}
+
+ClassDecl classDeclarationTail(Token classId) :
+{
+  Token superId;
+  VarDeclList vars = new VarDeclList();
+  MethodDeclList methods = new MethodDeclList();
+  VarDecl var;
+  MethodDecl method;
+}
+{
+  ( 
+  < LBRACES >
+  (
+    var=varDeclaration() { vars.addElement(var); }  
+  )*
+  (
+    method=methodDeclaration() { methods.addElement(method); }
+  )* < RBRACES >
+  
+  { return new ClassDeclSimple(new Identifier(classId.toString()), vars, methods); }
+  
+  )
+| (
+  < EXTENDS > superId=< ID > < LBRACES >
+  (
+    var=varDeclaration() { vars.addElement(var); }  
+  )*
+  (
+    method=methodDeclaration() { methods.addElement(method); }
+  )* < RBRACES >
+  
+  { return new ClassDeclExtends(new Identifier(classId.toString()), new Identifier(superId.toString()), vars, methods); }
+  )
+}
+
+VarDecl varDeclaration() :
+{
+  Token typeId;
+  Token varId;
+  VarDecl var;
+}
+{
+  (    typeId=< ID > varId=< ID > < SEMICOLON >
+    { return new VarDecl(new IdentifierType(typeId.toString()), new Identifier(varId.toString())); }
+  )  
+|  var=varDeclarationNoID() { return var; }
+}
+
+VarDecl varDeclarationNoID() :
+{
+  Type type;
+  Token varId;
+}
+{
+  type=typeNoID() varId=< ID > < SEMICOLON >  { return new VarDecl(type, new Identifier(varId.toString())); }
+}
+
+MethodDecl methodDeclaration() :
+{
+  Token methodId;
+  Type returnType;
+  FormalList parameters;
+  VarDeclList vars = new VarDeclList();
+  StatementList statements = new StatementList();
+  Exp returnExpression;
+}
+{
+  < PUBLIC > returnType=type() methodId=< ID > < LPAREN > parameters=parameterList() < RPAREN > < LBRACES >
+  methodLoop(vars, statements) < RETURN > returnExpression=expression() < SEMICOLON > < RBRACES >
+  { return new MethodDecl(returnType, new Identifier(methodId.toString()), parameters, vars, statements, returnExpression); }
+}
+
+void methodLoop(VarDeclList vars, StatementList statements) :
+{
+  Token startingId;
+  Statement statement;
+  VarDecl var;
+}
+{
+  startingId=< ID >  identifierStartedLine(startingId, vars, statements)
+| var=varDeclarationNoID() { vars.addElement(var); } methodLoop(vars, statements)
+| statement=statementNoID() { statements.addElement(statement); } ( statement=statement() { statements.addElement(statement); } )*
+| {}
+}
+
+void identifierStartedLine(Token startingId, VarDeclList vars, StatementList statements) :
+{
+  Token varId;
+  Statement statement;  
+}
+{
+  varId=< ID > < SEMICOLON > { vars.addElement(new VarDecl(new IdentifierType(startingId.toString()), new Identifier(varId.toString()))); }     methodLoop(vars, statements) // caso em que o primeiro identificador é o tipo da variável
+| statement=identifierStartedStatement(startingId) { statements.addElement(statement); } ( statement=statement() { statements.addElement(statement); } ) * // caso em que o primeiro identificador é parte de uma sentença. Não volta ao methodLoop porque não podem mais haver declarações de variáveis
+}
+
+Statement identifierStartedStatement(Token startingId) :
+{
+  Exp expression1;
+  Exp expression2;
+}
+{
+  < EQUAL > expression1=expression() < SEMICOLON > { return new Assign(new Identifier(startingId.toString()), expression1); }
+| < LBRACKET > expression1=expression() < RBRACKET > < EQUAL > expression2=expression() < SEMICOLON > { return new ArrayAssign(new Identifier(startingId.toString()), expression1, expression2); }
+}
+
+Statement statement() :
+{
+  Token startingId;
+  Statement statement;
+}
+{
+  (
+    startingId=< ID > statement=identifierStartedStatement(startingId)
+  | statement=statementNoID()
+  )
+  { return statement; }
+}
+
+FormalList parameterList() :
+{
+  FormalList parameters = new FormalList();
+  Formal parameter;
+  Type type;
+  Token id;
+}
+{
+  (
+    type=type() id=< ID > { parameters.addElement(new Formal(type, new Identifier(id.toString()))); } ( parameter=parameterListTail() { parameters.addElement(parameter); } )*
+  | {}
+  )
+
+  { return parameters; }
+}
+
+Formal parameterListTail() :
+{
+  Type type;
+  Token id;
+}
+{
+  < COMMA > type=type() id=< ID > { return new Formal(type, new Identifier(id.toString())); }
+}
+
+Type type() :
+{
+  Token typeId;
+  Type type;
+}
+{
+  ( typeId=< ID > { return new IdentifierType(typeId.toString()); } )
+| ( type=typeNoID() { return type; } )
+}
+
+Type typeNoID() :
+{}
+{  ( < INT > { return new IntegerType(); } )
+| ( < INTARRAY > { return new IntArrayType(); } )
+| ( < BOOLEAN > { return new BooleanType(); } )
+// | < ID > esta produção não é incluida aqui porque é tratada no não-terminal methodLoop, para evitar conflitos.
+}
+
+Statement statementNoID() :
+{
+  StatementList blockStatements = new StatementList();
+  Statement statement1, statement2;
+  Exp expression;
+  { }
+}
+{
+  < LBRACES > ( statement1=statement() { blockStatements.addElement(statement1); } )* < RBRACES > { return new Block(blockStatements); }
+| < IF > < LPAREN > expression=expression() < RPAREN > statement1=statement() < ELSE > statement2=statement() { return new If(expression, statement1, statement2); }
+| < WHILE > < LPAREN > expression=expression() < RPAREN > statement1=statement() { return new While(expression, statement1); }
+| < SYSOUT > < LPAREN > expression=expression() < RPAREN > < SEMICOLON > { return new Print(expression); }
+// As produções iniciando com < ID > não são incluidas aqui  porque são tratadas no não-terminal methodLoop, para evitar conflitos.
+}
+
+Exp expression() :
+{
+  Exp firstExp;
+  Exp completeExp;
+  Token intLiteral;
+  Token identifier;
+}
+{
+ intLiteral=< INT_LITERAL > completeExp=expressionRecursion(new IntegerLiteral(new Integer(intLiteral.toString()))) { return completeExp; }
+| < TRUE > completeExp=expressionRecursion(new True()) { return completeExp; }
+| < FALSE > completeExp=expressionRecursion(new False()) { return completeExp; }
+| identifier=< ID > completeExp=expressionRecursion(new IdentifierExp(identifier.toString())) { return completeExp; } 
+| < THIS > completeExp=expressionRecursion(new This()) { return completeExp; }
+| < NEW > firstExp=newStartedExpression() completeExp=expressionRecursion(firstExp) { return completeExp; }
+| < NOT > firstExp=expression() completeExp=expressionRecursion(new Not(firstExp)) { return completeExp; }
+| < LPAREN > firstExp=expression() < RPAREN > completeExp=expressionRecursion(firstExp) { return completeExp; }
+}
+
+Exp newStartedExpression() :
+{
+  Exp arraySize;
+  Token classId;
+}
+{
+  < INT > < LBRACKET > arraySize=expression() < RBRACKET > { return new NewArray(arraySize); }
+| classId=< ID > < LPAREN > < RPAREN > { return new NewObject(new Identifier(classId.toString())); }}
+
+Exp expressionRecursion(Exp firstExp) :
+{
+  Exp secondExp;
+  Exp completeExp;
+}
+{
+  < PLUS > secondExp=expression() completeExp=expressionRecursion(new Plus(firstExp, secondExp)) { return completeExp; }
+| < AND > secondExp=expression() completeExp=expressionRecursion(new And(firstExp, secondExp)) { return completeExp; }
+| < LESSTHAN > secondExp=expression() completeExp=expressionRecursion(new LessThan(firstExp, secondExp)) { return completeExp; }
+| < MINUS > secondExp=expression() completeExp=expressionRecursion(new Minus(firstExp, secondExp)) { return completeExp; }
+| < MULTIPLY > secondExp=expression() completeExp=expressionRecursion(new Times(firstExp, secondExp)) { return completeExp; }
+| < LBRACKET > secondExp=expression() < RBRACKET > completeExp=expressionRecursion(new ArrayLookup(firstExp, secondExp)) { return completeExp; }
+| < DOT > secondExp=dotStartedExpressionRecursion(firstExp) completeExp=expressionRecursion(secondExp) { return completeExp; }
+| { return firstExp; }}
+
+Exp dotStartedExpressionRecursion(Exp firstExp) :
+{
+  Token methodId;
+  ExpList parameters;
+}
+{
+  < LENGTH > { return new ArrayLength(firstExp); }
+| methodId=< ID > < LPAREN > parameters=expressionList() < RPAREN > { return new Call(firstExp, new Identifier(methodId.toString()), parameters); }}
+
+ExpList expressionList() :
+{
+  Exp e;
+  ExpList expressions = new ExpList();}
+{  e=expression() { expressions.addElement(e); } ( e=expressionListTail() { expressions.addElement(e); } )* { return expressions; }
+| { return expressions; }
+}
+
+Exp expressionListTail() :
+{
+  Exp e;
+}
+{  < COMMA > e=expression() { return e; }
+}
